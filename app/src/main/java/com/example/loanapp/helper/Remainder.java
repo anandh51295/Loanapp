@@ -31,8 +31,8 @@ public class Remainder extends Service {
     public static final String ACTION_STOP_FOREGROUND_SERVICE = "ACTION_STOP_FOREGROUND_SERVICE";
     private static final String TAG_FOREGROUND_SERVICE = "FOREGROUND_SERVICE";
     int check = 0;
-    ArrayList<String> times;
-    ArrayList<String> amounts;
+    ArrayList<String> times  = new ArrayList<String>();
+    ArrayList<String> amounts = new ArrayList<String>();
     String date;
     @Override
     public void onCreate() {

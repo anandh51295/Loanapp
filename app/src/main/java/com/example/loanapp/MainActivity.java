@@ -59,6 +59,11 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 Log.d("Installment","not added");
             }
+            Cursor c = db.getinstallment();
+            while (c.moveToNext()){
+                Log.d("val",c.getString(0));
+            }
+
 
             Cursor cursor = db.getcustomer();
             while (cursor.moveToNext()) {
