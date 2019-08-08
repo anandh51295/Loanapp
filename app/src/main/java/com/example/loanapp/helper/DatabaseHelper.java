@@ -139,10 +139,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getinstallment(String date) {
         SQLiteDatabase database = this.getWritableDatabase();
-        String query = "select c.CUSTOMERNAME,r.INSTALLMENTAMOUNT from repaymentstable as r,loantable as l, customertable as c where r.DATETIME="+date+" and l.ACCOUNTID = r.ACCOUNTID and l.CUSTID = c.CUSTOMERID limit 1";
+        //String query = "select c.CUSTOMERNAME,r.INSTALLMENTAMOUNT from repaymentstable as r,loantable as l, customertable as c where r.DATETIME='"+date+"' and l.ACCOUNTID = r.ACCOUNTID and l.CUSTID = c.CUSTOMERID";
+        String query = "select INSTALLMENTAMOUNT from repaymentstable where DATETIME= '"+date+"'";
         Cursor cursor = database.rawQuery(query, null);
         if (cursor != null) {
-            //cursor.moveToFirst();
+//            cursor.moveToFirst();
         }
         return cursor;
     }

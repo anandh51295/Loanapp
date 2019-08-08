@@ -107,16 +107,21 @@ public class Remainder extends Service {
     public void checkdue() {
         try {
             String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
             Cursor cursor = db.getinstallment(date);
-            String username;
-            Float amount;
-            while (cursor.moveToNext()) {
-                username = cursor.getColumnName(0);
-                amount = cursor.getFloat(1);
-                sendnotify(username, amount.toString());
+            if(cursor != null){
+                Log.d("service","null");
             }
+            String username="hello";
+            float amount=1000;
+            while (cursor.moveToNext()) {
+//                username = cursor.getColumnName(0);
+                amount = cursor.getFloat(0);
+            }
+            sendnotify(username, String.valueOf(amount));
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d("service","error");
         }
 
     }
@@ -125,7 +130,7 @@ public class Remainder extends Service {
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
         Notification n = new Notification.Builder(this)
-                .setContentTitle("Remainder To For Due")
+                .setContentTitle("Remainder For Due")
                 .setContentText("Collect: " + amount + " From:" + username)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pIntent)
