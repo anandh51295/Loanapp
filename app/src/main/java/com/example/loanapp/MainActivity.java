@@ -1,5 +1,6 @@
 package com.example.loanapp;
 
+import android.app.ActivityManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.view.View;
 
 import com.example.loanapp.adopter.CustomerAdopter;
 import com.example.loanapp.helper.DatabaseHelper;
+import com.example.loanapp.helper.Remainder;
 import com.example.loanapp.model.CustomerModel;
 import com.example.loanapp.page.AddcustomerActivity;
 
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<CustomerModel> data = new ArrayList<>();
     DatabaseHelper db;
     CustomerModel cdata;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             Cursor cursor = db.getcustomer();
             while (cursor.moveToNext()) {
-                cdata = new CustomerModel(cursor.getInt(0),cursor.getInt(1),cursor.getString(2),cursor.getString(3));
+                cdata = new CustomerModel(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getString(3));
                 data.add(cdata);
 
             }
@@ -62,8 +65,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if (!isServiceRunning(Remainder.class)) {
+            Intent intent = new Intent(MainActivity.this, Remainder.class);
+            intent.setAction(Remainder.ACTION_START_FOREGROUND_SERVICE);
+            startService(intent);
+        }
 
     }
+
+
 
     @Override
     protected void onResume() {
@@ -75,12 +85,12 @@ public class MainActivity extends AppCompatActivity {
         }
         try {
 
-                Cursor cursor = db.getcustomer();
-                while (cursor.moveToNext()) {
-                    cdata = new CustomerModel(cursor.getInt(0),cursor.getInt(1),cursor.getString(2),cursor.getString(3));
-                    data.add(cdata);
+            Cursor cursor = db.getcustomer();
+            while (cursor.moveToNext()) {
+                cdata = new CustomerModel(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getString(3));
+                data.add(cdata);
 
-                }
+            }
 
 
         } catch (Exception e) {
@@ -101,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
         search(searchView);
         return true;
     }
-
 
 
     @Override
@@ -125,5 +134,15 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    public boolean isServiceRunning(Class serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

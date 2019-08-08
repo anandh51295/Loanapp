@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 //import net.sqlcipher.database.SQLiteDatabase;
 //import net.sqlcipher.database.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -23,6 +27,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_4 = "AMOUNT";
     public static final String COL_5 = "DATE";
 
+    public static final String TABLE3_NAME = "repaymentstable";
+    public static final String COL1 = "ID";
+    public static final String COL2 = "ACCOUNTID";
+    public static final String COL3 = "INSTALLMENTAMOUNT";
+    public static final String COL4 = "DATETIME";
+
     public DatabaseHelper(Context context) {
 
         super(context, DATABASE_NAME, null, 1);
@@ -35,12 +45,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,CUSTOMERID INTEGER,CUSTOMERNAME VARCHAR, DOB VARCHAR)");
         db.execSQL("create table " + TABLE2_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,CUSTID INTEGER,ACCOUNTID INTEGER, AMOUNT FLOAT,DATE VARCHAR)");
+        db.execSQL("create table " + TABLE3_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,ACCOUNTID INTEGER, INSTALLMENTAMOUNT FLOAT,DATETIME VARCHAR)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE2_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE3_NAME);
     }
 
     public boolean insertcustomer(int id,String name,String dob) {
@@ -85,6 +97,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean insertinstallment(String acid,float amount,String date) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+                       ContentValues contentValues = new ContentValues();
+            contentValues.put(COL2, acid);
+            contentValues.put(COL3, amount);
+            contentValues.put(COL4, date);
+            try {
+                db.insert(TABLE3_NAME, null, contentValues);
+                return true;
+            } catch (Exception rt) {
+                rt.printStackTrace();
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public Cursor getcustomer() {
         SQLiteDatabase database = this.getWritableDatabase();
@@ -99,6 +130,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getloan(int cid) {
         SQLiteDatabase database = this.getWritableDatabase();
         String query = "select * from loantable where CUSTID="+cid+"";
+        Cursor cursor = database.rawQuery(query, null);
+        if (cursor != null) {
+            //cursor.moveToFirst();
+        }
+        return cursor;
+    }
+
+    public Cursor getinstallment(String date) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        String query = "select c.CUSTOMERNAME,r.INSTALLMENTAMOUNT from repaymentstable as r,loantable as l, customertable as c where r.DATETIME="+date+" and l.ACCOUNTID = r.ACCOUNTID and l.CUSTID = c.CUSTOMERID limit 1";
         Cursor cursor = database.rawQuery(query, null);
         if (cursor != null) {
             //cursor.moveToFirst();

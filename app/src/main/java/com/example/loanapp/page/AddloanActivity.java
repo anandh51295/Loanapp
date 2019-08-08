@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -76,6 +77,12 @@ public class AddloanActivity extends AppCompatActivity {
                             boolean c = db.insertloan(cid,lid, Float.parseFloat(bal), date);
                             if (c) {
                                 Toast.makeText(getApplicationContext(), "Loan Added", Toast.LENGTH_LONG).show();
+                                boolean d = db.insertinstallment(lid,Float.parseFloat(bal),date);
+                                if(d){
+                                    Log.d("Installment","added");
+                                }else{
+                                    Log.d("Installment","not added");
+                                }
                                 finish();
                             } else {
                                 Toast.makeText(getApplicationContext(), "Loan not Added", Toast.LENGTH_LONG).show();

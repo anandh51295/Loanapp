@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.loanapp">
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -21,6 +22,12 @@
 
             </intent-filter>
         </activity>
+        <service
+            android:name=".helper.Remainder"
+            android:enabled="true"
+            android:exported="true"
+            android:stopWithTask="false"
+            />
     </application>
 
 </manifest>
