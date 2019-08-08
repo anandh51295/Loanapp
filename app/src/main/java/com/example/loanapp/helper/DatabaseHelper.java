@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -31,7 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL1 = "ID";
     public static final String COL2 = "ACCOUNTID";
     public static final String COL3 = "INSTALLMENTAMOUNT";
-    public static final String COL4 = "DATETIME";
+    public static final String COL4 = "DATE";
 
     public DatabaseHelper(Context context) {
 
@@ -45,7 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,CUSTOMERID INTEGER,CUSTOMERNAME VARCHAR, DOB VARCHAR)");
         db.execSQL("create table " + TABLE2_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,CUSTID INTEGER,ACCOUNTID INTEGER, AMOUNT FLOAT,DATE VARCHAR)");
-        db.execSQL("create table " + TABLE3_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,ACCOUNTID INTEGER, INSTALLMENTAMOUNT FLOAT,DATETIME VARCHAR)");
+        db.execSQL("create table " + TABLE3_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,ACCOUNTID INTEGER, INSTALLMENTAMOUNT FLOAT,DATE TIMESTAMP)");
     }
 
     @Override
@@ -137,14 +138,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public Cursor getinstallment(String date) {
+    public Cursor getinstallment() {
         SQLiteDatabase database = this.getWritableDatabase();
-        //String query = "select c.CUSTOMERNAME,r.INSTALLMENTAMOUNT from repaymentstable as r,loantable as l, customertable as c where r.DATETIME='"+date+"' and l.ACCOUNTID = r.ACCOUNTID and l.CUSTID = c.CUSTOMERID";
-        String query = "select INSTALLMENTAMOUNT from repaymentstable where DATETIME= '"+date+"'";
+        String query = "select DATE,INSTALLMENTAMOUNT from repaymentstable";
         Cursor cursor = database.rawQuery(query, null);
         if (cursor != null) {
-//            cursor.moveToFirst();
+            //cursor.moveToFirst();
         }
         return cursor;
     }
+
+//    public Cursor getinstallment(String date) {
+//        SQLiteDatabase database = this.getWritableDatabase();
+//        //String query = "select c.CUSTOMERNAME,r.INSTALLMENTAMOUNT from repaymentstable as r,loantable as l, customertable as c where r.DATETIME='"+date+"' and l.ACCOUNTID = r.ACCOUNTID and l.CUSTID = c.CUSTOMERID";
+//        String query = "select INSTALLMENTAMOUNT from repaymentstable where DATETIME= '"+date+"'";
+//        Cursor cursor = database.rawQuery(query, null);
+//        if (cursor != null) {
+////            cursor.moveToFirst();
+//        }
+//        return cursor;
+//    }
 }

@@ -45,6 +45,21 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         try {
+
+            boolean d = db.insertinstallment("12345",50,"1565270991");
+            if(d){
+                Log.d("Installment","added");
+            }else{
+                Log.d("Installment","not added");
+            }
+
+            boolean cd = db.insertinstallment("12543",80,"1565267400");
+            if(cd){
+                Log.d("Installment","added");
+            }else{
+                Log.d("Installment","not added");
+            }
+
             Cursor cursor = db.getcustomer();
             while (cursor.moveToNext()) {
                 cdata = new CustomerModel(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getString(3));

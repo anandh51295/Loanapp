@@ -15,6 +15,7 @@ import com.example.loanapp.MainActivity;
 import com.example.loanapp.R;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,12 +30,16 @@ public class Remainder extends Service {
 
     public static final String ACTION_STOP_FOREGROUND_SERVICE = "ACTION_STOP_FOREGROUND_SERVICE";
     private static final String TAG_FOREGROUND_SERVICE = "FOREGROUND_SERVICE";
-
+    int check = 0;
+    ArrayList<String> times;
+    ArrayList<String> amounts;
+    String date;
     @Override
     public void onCreate() {
         super.onCreate();
-        db = new DatabaseHelper(getApplicationContext());
+
         Log.d("service", "Started");
+        date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     }
 
     @Override
@@ -105,20 +110,44 @@ public class Remainder extends Service {
     }
 
     public void checkdue() {
+        db = new DatabaseHelper(getApplicationContext());
         try {
-            String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-
-            Cursor cursor = db.getinstallment(date);
-            if(cursor != null){
-                Log.d("service","null");
-            }
-            String username="hello";
-            float amount=1000;
-            while (cursor.moveToNext()) {
+//            String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            Long tsLong = System.currentTimeMillis()/1000;
+            String ts = tsLong.toString();
+            if(check==0){
+                Cursor cursor = db.getinstallment();
+                if(cursor == null){
+                    Log.d("service","null");
+                }
+//            String username="hello";
+//            float amount=1000;
+                while (cursor.moveToNext()) {
 //                username = cursor.getColumnName(0);
-                amount = cursor.getFloat(0);
+//                amount = cursor.getFloat(0);
+//                    sendnotify(String.valueOf(cursor.getFloat(0)));
+                    times.add(String.valueOf(cursor.getString(0)));
+                    amounts.add(String.valueOf(cursor.getFloat(1)));
+                }
+                check=1;
             }
-            sendnotify(username, String.valueOf(amount));
+            String cdate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            if(date!=cdate){
+                check=0;
+                times.clear();
+                amounts.clear();
+            }
+
+            if(!times.isEmpty()){
+                int l=times.size();
+                for(int i=0;i<l;i++){
+                    if(times.get(i)==ts){
+                        sendnotify(amounts.get(i));
+                    }
+                }
+            }
+
+
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("service","error");
@@ -126,12 +155,12 @@ public class Remainder extends Service {
 
     }
 
-    public void sendnotify(String username, String amount) {
+    public void sendnotify(String amount) {
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
         Notification n = new Notification.Builder(this)
                 .setContentTitle("Remainder For Due")
-                .setContentText("Collect: " + amount + " From:" + username)
+                .setContentText("Pay: " + amount)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pIntent)
                 .setAutoCancel(true).build();
