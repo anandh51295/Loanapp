@@ -128,6 +128,7 @@ public class Remainder extends Service {
 //                    sendnotify(String.valueOf(cursor.getFloat(0)));
                     times.add(String.valueOf(cursor.getString(0)));
                     amounts.add(String.valueOf(cursor.getFloat(1)));
+                    Log.d("service","works");
                 }
                 check=1;
             }
