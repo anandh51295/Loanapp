@@ -136,6 +136,7 @@ public class Remainder extends Service {
                 check=0;
                 times.clear();
                 amounts.clear();
+                date=cdate;
             }
 
             if(!times.isEmpty()){
